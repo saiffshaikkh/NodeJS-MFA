@@ -18,6 +18,12 @@ export const register = async (req, res) => {
 
 export const login = (req, res) => {
   try {
+    console.log("The Auth User Is: ", req.user);
+    res.status(200).json({
+      message: "User Logged In Successfully",
+      username: req.user.username,
+      isMfaActive: req.user.isMfaActive,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error Logging In" });
@@ -26,6 +32,15 @@ export const login = (req, res) => {
 
 export const status = (req, res) => {
   try {
+    if (req.user) {
+      res.status(200).json({
+        message: "User Logged In Successfully",
+        username: req.user.username,
+        isMfaActive: req.user.isMfaActive,
+      });
+    } else {
+      res.status(401).json({ message: "User Not Logged In" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error Checking Status" });
@@ -34,6 +49,16 @@ export const status = (req, res) => {
 
 export const logout = (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: "User Not Logged In" });
+    }
+    req.logout((err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Error Logging Out" });
+      }
+      res.status(200).json({ message: "User Logged Out Successfully" });
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error Logging Out" });

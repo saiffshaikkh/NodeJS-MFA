@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import dbConnect from "./config/dbConnect.js";
 import authRoute from "./routes/authRoute.js";
+import "./config/passportConfig.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(json({ limit: "100mb" }));
 app.use(urlencoded({ limit: "100mb", extended: true }));
+
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
+  next();
+});
 
 app.use("/api/auth", authRoute);
 
